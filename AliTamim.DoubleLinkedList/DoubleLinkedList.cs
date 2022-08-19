@@ -2,32 +2,35 @@
 
 namespace AliTamim.LinkedList
 {
-    public class SingleLinkedList<T> : ICollection<T>
+    public class DoubleLinkedList<T> : ICollection<T>
     {
-        private SingleLinkedListNode<T>? _head;
-        private SingleLinkedListNode<T>? _tail;
+        private DoubleLinkedListNode<T>? _head;
+        private DoubleLinkedListNode<T>? _tail;
 
         #region Add
         public void AddFirst(T value)
         {
-            AddFirst(new SingleLinkedListNode<T>(value));
+            AddFirst(new DoubleLinkedListNode<T>(value));
         }
-        public void AddFirst(SingleLinkedListNode<T> node)
+        public void AddFirst(DoubleLinkedListNode<T> node)
         {
-            SingleLinkedListNode<T>? temp = _head;
+            DoubleLinkedListNode<T>? temp = _head;
             _head = node;
             _head.Next = temp;
             Count++;
             if(Count == 1)
             {
                 _tail = _head;
+            } else
+            {
+                temp.Previous = _head;
             }
         }
         public void AddLast(T value)
         {
-            AddLast(new SingleLinkedListNode<T>(value));
+            AddLast(new DoubleLinkedListNode<T>(value));
         }
-        public void AddLast(SingleLinkedListNode<T> node)
+        public void AddLast(DoubleLinkedListNode<T> node)
         {
             if(Count == 0)
             {
@@ -35,6 +38,7 @@ namespace AliTamim.LinkedList
             } else
             {
                 _tail.Next = node;
+                node.Previous = _tail;
             }
             _tail = node;
             Count++;
@@ -52,6 +56,9 @@ namespace AliTamim.LinkedList
                 if (Count == 0)
                 {
                     _tail = null;
+                } else
+                {
+                    _head.Previous = null;
                 }
             }
         }
@@ -65,13 +72,8 @@ namespace AliTamim.LinkedList
                     _tail = null;
                 } else
                 {
-                    SingleLinkedListNode<T> current = _head;
-                    while (current.Next != _tail)
-                    { 
-                        current = current.Next;
-                    }
-                    current.Next = null;
-                    _tail = current;
+                    _tail.Previous.Next = null;
+                    _tail = _tail.Previous;
                 }
                 Count--;
             } 
@@ -97,7 +99,7 @@ namespace AliTamim.LinkedList
 
         public bool Contains(T item)
         {
-            SingleLinkedListNode<T> current = _head;
+            DoubleLinkedListNode<T> current = _head;
             while(current != null)
             {
                 if(current.Value.Equals(item))
@@ -111,7 +113,7 @@ namespace AliTamim.LinkedList
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            SingleLinkedListNode<T> current = _head;
+            DoubleLinkedListNode<T> current = _head;
             while (current != null)
             {
                 array[arrayIndex++] = current.Value;
@@ -121,7 +123,7 @@ namespace AliTamim.LinkedList
 
         public IEnumerator<T> GetEnumerator()
         {
-            SingleLinkedListNode<T> cureent = _head;
+            DoubleLinkedListNode<T> cureent = _head;
             while (cureent != null)
             {
                 yield return cureent.Value;
@@ -131,8 +133,8 @@ namespace AliTamim.LinkedList
 
         public bool Remove(T item)
         {
-            SingleLinkedListNode<T> previous = null;
-            SingleLinkedListNode<T> cureent = _head;
+            DoubleLinkedListNode<T> previous = null;
+            DoubleLinkedListNode<T> cureent = _head;
             // 1- empty list: do nothing
             // 2- single node: previous = null;
             // many node::
@@ -149,6 +151,9 @@ namespace AliTamim.LinkedList
                         if (cureent.Next == null)
                         {
                             _tail = previous;
+                        } else
+                        {
+                            cureent.Next.Previous = previous;
                         }
                         Count--;
                     } else
