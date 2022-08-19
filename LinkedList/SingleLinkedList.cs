@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 
 namespace AliTamim.LinkedList
 {
@@ -47,46 +48,130 @@ namespace AliTamim.LinkedList
         #endregion
 
         #region remove
+        public void RemoveFirst()
+        {
+            if (Count > 0)
+            {
+                _head = _head.Next;
+                Count--;
+
+                if (Count == 0)
+                {
+                    _tail = null;
+                }
+            }
+        }
+        public void RemoveLast()
+        {
+            if (Count > 0)
+            {
+                if (Count == 1)
+                {
+                    _head = null;
+                    _tail = null;
+                } else
+                {
+                    ChainNode<T> current = _head;
+                    while (current.Next != _tail)
+                    { 
+                        current = current.Next;
+                    }
+                    current.Next = null;
+                    _tail = current;
+                }
+                Count--;
+            } 
+        }
         #endregion
 
         #region ICollection
         public int Count { get; private set; }
 
-        public bool IsReadOnly => throw new NotImplementedException();
+        public bool IsReadOnly => false;
 
         public void Add(T item)
         {
-            throw new NotImplementedException();
+            AddFirst(item);
         }
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            _head = null;
+            _tail = null;
+            Count = 0;
         }
 
         public bool Contains(T item)
         {
-            throw new NotImplementedException();
+            ChainNode<T> current = _head;
+            while(current != null)
+            {
+                if(current.Value.Equals(item))
+                {
+                    return true;
+                }
+                current = current.Next;
+            }
+            return false;
         }
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            ChainNode<T> current = _head;
+            while (current != null)
+            {
+                array[arrayIndex++] = current.Value;
+                current = current.Next;
+            }
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            throw new NotImplementedException();
+            ChainNode<T> cureent = _head;
+            while (cureent != null)
+            {
+                yield return cureent.Value;
+                cureent = cureent.Next;
+            }
         }
 
         public bool Remove(T item)
         {
-            throw new NotImplementedException();
+            ChainNode<T> previous = null;
+            ChainNode<T> cureent = _head;
+            // 1- empty list: do nothing
+            // 2- single node: previous = null;
+            // many node::
+            //  a- node to remove is the first node
+            //  b- node to remove is the middle or last
+
+            while(cureent != null)
+            {
+                if(cureent.Value.Equals(item))
+                {
+                    if (previous != null)
+                    {
+                        previous.Next = cureent.Next;
+                        if (cureent.Next == null)
+                        {
+                            _tail = previous;
+                        }
+                        Count--;
+                    } else
+                    {
+                        RemoveFirst();
+                    }
+                    return true;
+                }
+                previous = cureent;
+                cureent = cureent.Next;
+            }
+            return false;
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException();
+            return GetEnumerator();
         }
         #endregion
     }
