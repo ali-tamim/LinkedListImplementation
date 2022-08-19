@@ -13,13 +13,44 @@ namespace AliTamim.LinkedList
         private ChainNode<T>? _tail;
 
         #region Add
+        public void AddFirst(T value)
+        {
+            AddFirst(new ChainNode<T>(value));
+        }
+        public void AddFirst(ChainNode<T> node)
+        {
+            ChainNode<T>? temp = _head;
+            _head = node;
+            _head.Next = temp;
+            Count++;
+            if(Count == 1)
+            {
+                _tail = _head;
+            }
+        }
+        public void AddLast(T value)
+        {
+            AddLast(new ChainNode<T>(value));
+        }
+        public void AddLast(ChainNode<T> node)
+        {
+            if(Count == 0)
+            {
+                _head = node;
+            } else
+            {
+                _tail.Next = node;
+            }
+            _tail = node;
+            Count++;
+        }
         #endregion
 
         #region remove
         #endregion
 
         #region ICollection
-        public int Count => throw new NotImplementedException();
+        public int Count { get; private set; }
 
         public bool IsReadOnly => throw new NotImplementedException();
 
